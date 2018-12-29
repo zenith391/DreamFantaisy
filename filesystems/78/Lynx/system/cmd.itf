@@ -1,0 +1,79 @@
+-- Command Line Interface (CLI) file for Lynx
+local gpu = require("gpu")
+local event = require("event")
+local keyboard = require("keyboard")
+local keyboardTick = 0
+local keyboardRepeat = false
+local keyFetched = false
+local keyboardChar = -1
+local keyboardCode = -1
+local currCmd = ""
+local y = 0
+
+
+
+-- Internal functions
+local keyboardListener = function(name, char, ch)
+	if char == 17 or char == 16 then
+		return
+	end
+	if name == "keyReleased" then
+		keyboardChar = -1
+		keyboardCode = -1
+	end
+	if name == "keyPressed" then
+		keyboardChar = ch
+		keyboardCode = char
+	end
+	keyFetched = false
+end
+
+-- Interface functions
+local init = function()
+	gpu.switchToConsole()
+	event.register("keyPressed", keyboardListener)
+	event.register("keyReleased", keyboardListener)
+	osdbg("[DEBUG] CLI booted")
+end
+
+local function process(cmd)
+	local ret, err = dofile(cmd)
+	if err ~= nil then
+		osdbg("err " .. err)
+	end
+end
+
+local update = function()
+	if keyboardChar ~= -1 then
+		if keyboardCode == 10 then
+			process(currCmd)
+			keyboardCode = -1;
+			currCmd = ""
+			y = y + 1
+			return
+		end
+		if keyboardCode == 8 and currCmd:len() > 0 then
+			gpu.drawText(currCmd:len()-1, y, " ")
+			currCmd = currCmd:sub(1, currCmd:len()-1)
+			keyboardCode = -1;
+			--return
+		end
+		if not keyFetched then
+			keyFetched = true -- fetch key
+			if keyboardChar > 31 and keyboardChar < 255 then
+				currCmd = currCmd .. string.char(keyboardChar)
+			end
+		end
+	end
+	
+	gpu.setColor(0xFFFFFF)
+	gpu.drawText(0, y, currCmd)
+	gpu.flushBuffer()
+end
+
+local quit = function()
+	lib.cancel("keyPressed", keyboardListener)
+	lib.cancel("keyReleased", keyboardListener)
+end
+
+return init, update, quit
