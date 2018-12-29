@@ -30,6 +30,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	private ArrayList<KeyListener> keyListeners = new ArrayList<>();
 	
 	private char[][] textVideoBuffer; // YX buffer
+	private int[][] textVideoRGBBuffer;
 	
 	private Font font;
 
@@ -39,7 +40,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	
 	@Override
 	public void init() {
-		setResolution(1280, 720);
+		setResolution(640, 480);
 		try {
 			font = Font.createFonts(new File("res/unifont.ttf"))[0].deriveFont(14.f);
 			
@@ -106,12 +107,12 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 
 	@Override
 	public int getMaxWidth() {
-		return 1280;
+		return 640;
 	}
 
 	@Override
 	public int getMaxHeight() {
-		return 720;
+		return 480;
 	}
 
 	@Override
@@ -146,6 +147,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 				for (int x = 0; x < 80; x++) {
 					char ch = textVideoBuffer[y][x];
 					if (ch != 0) {
+						g2d.setColor(new Color(textVideoRGBBuffer[y][x]));
 						g2d.drawString(String.valueOf(ch), x * 8, y * 16 + 16);
 					}
 				}
@@ -161,6 +163,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 		if (mode == MODE_CONSOLE) {
 			for (int x1 = x; x1 < x + str.length(); x1++) {
 				textVideoBuffer[y][x1] = str.charAt(x1 - x);
+				textVideoRGBBuffer[y][x1] = rgb;
 			}
 		} else {
 			g2d.setColor(new Color(rgb));
@@ -196,8 +199,9 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	public void setMode(int mode) {
 		this.mode = mode;
 		if (mode == MODE_CONSOLE) {
-			textVideoBuffer = new char[25][80];
-			setResolution(80 * 8, 25 * 16);
+			textVideoBuffer = new char[30][80];
+			textVideoRGBBuffer = new int[30][80];
+			setResolution(80 * 8, 30 * 16);
 		} else if (mode == MODE_PGPU) {
 			textVideoBuffer = null;
 			setResolution(getMaxWidth(), getMaxHeight());

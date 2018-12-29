@@ -23,6 +23,10 @@ public class GPU extends Component {
 			if (b == 53) {
 				gs.refresh();
 			}
+			else if (b == 52) {
+				op = 1;
+				mop = 1;
+			}
 			else if (b == 54) {
 				op = 0;
 				mop = 2;
@@ -35,11 +39,11 @@ public class GPU extends Component {
 				gs.setMode(IGraphicsScreen.MODE_PGPU);
 			}
 		}
-		if (b == 52 && mop == 0) {
-			op = 1;
-			mop = 1;
-			return;
-		}
+//		if (b == 52 && mop == 0) {
+//			op = 1;
+//			mop = 1;
+//			return;
+//		}
 		else if (op == 1 && mop == 1) {
 			a1 = b;
 			if (mop == 1)

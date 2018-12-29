@@ -1,4 +1,5 @@
 local loaded = {}
+local run = true
 
 function require(lib)
 	if loaded[lib] ~= nil then
@@ -12,8 +13,11 @@ function require(lib)
 	return loaded[lib]
 end
 
-function loadfile(file)
-	local filec, err = computer.loadFromDrive(computer.getBootAddress(), file)
+function loadfile(file, drive)
+	if drive == nil then
+		drive = computer.getBootAddress()
+	end
+	local filec, err = computer.loadFromDrive(drive, file)
 	if err ~= nil then
 		return nil, err
 	end
@@ -25,8 +29,8 @@ function loadfile(file)
 	return func, nil
 end
 
-function dofile(file)
-	local f, err = loadfile(file)
+function dofile(file, drive)
+	local f, err = loadfile(file, drive)
 	if err ~= nil or f == nil then
 		return nil, err
 	end
@@ -45,6 +49,15 @@ end
 
 function computer.getBootAddress()
 	return computer.getROMData()
+end
+
+function computer.exists(path, drive)
+	local f = loadfile(path, drive)
+	return (f ~= nil)
+end
+
+function computer.shutdown()
+	run = false
 end
 
 _G.osdbg = print
@@ -72,7 +85,7 @@ end
 require("event").register("keyPressed", resetTime)
 
 
-while true do
+while run do
 	if timeWithoutAction > 1280 then
 		if cube_gmode == 1 then
 			gpu.switchToConsole()
@@ -91,7 +104,5 @@ while true do
 		gop.process()
 	end
 	timeWithoutAction = timeWithoutAction + 1
-	computer.sleep(32)
-	--coroutine.yield()
-	--print(timeWithoutAction)
+	computer.sleep(16) -- around 60 iterations per second
 end

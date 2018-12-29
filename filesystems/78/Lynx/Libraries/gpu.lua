@@ -40,6 +40,11 @@ function lib.fillRect(x, y, width, height)
 	gpu:sendDirect(color)
 end
 
+-- Ultra Low Level operation
+function lib.sendULLOperation(num)
+	gpu:sendDirect(num)
+end
+
 function lib.drawText(x, y, text)
 	gpu:sendDirect(54)
 	gpu:sendDirect(x)

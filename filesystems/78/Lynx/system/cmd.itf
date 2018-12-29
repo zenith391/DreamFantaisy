@@ -10,6 +10,7 @@ local keyboardCode = -1
 local currCmd = ""
 local y = 0
 
+local PATH = {"", "Lynx/system/", "Lynx/Executables/"}
 
 
 -- Internal functions
@@ -36,26 +37,39 @@ local init = function()
 	osdbg("[DEBUG] CLI booted")
 end
 
+local quit = function()
+	event.cancel("keyPressed", keyboardListener)
+	event.cancel("keyReleased", keyboardListener)
+end
+
 local function process(cmd)
-	local ret, err = dofile(cmd)
-	if err ~= nil then
-		osdbg("err " .. err)
+	for k, v in pairs(PATH) do
+		if computer.exists(v .. cmd) then
+			quit()
+			local ret, err = dofile(cmd)
+			init()
+			return
+		end
 	end
+	printerr("No \"" .. cmd .. "\" found!")
+	
 end
 
 local update = function()
 	if keyboardChar ~= -1 then
 		if keyboardCode == 10 then
+			y = y + 1
 			process(currCmd)
 			keyboardCode = -1;
 			currCmd = ""
-			y = y + 1
 			return
 		end
 		if keyboardCode == 8 and currCmd:len() > 0 then
-			gpu.drawText(currCmd:len()-1, y, " ")
+			gpu.drawText(0, y, string.rep(string.char(32), currCmd:len()))
 			currCmd = currCmd:sub(1, currCmd:len()-1)
 			keyboardCode = -1;
+			gpu.flushBuffer()
+			
 			--return
 		end
 		if not keyFetched then
@@ -67,13 +81,28 @@ local update = function()
 	end
 	
 	gpu.setColor(0xFFFFFF)
-	gpu.drawText(0, y, currCmd)
+	gpu.drawText(0, y, ">" .. currCmd)
 	gpu.flushBuffer()
 end
 
-local quit = function()
-	lib.cancel("keyPressed", keyboardListener)
-	lib.cancel("keyReleased", keyboardListener)
+function _G.printerr(msg)
+	msg = tostring(msg)
+	if msg:len() < 80 then
+		gpu.setColor(0xFF0000)
+		gpu.drawText(0, y, msg)
+		gpu.flushBuffer()
+	end
+	y = y + 1
+end
+
+function _G.print(msg)
+	msg = tostring(msg)
+	if msg:len() < 80 then
+		gpu.setColor(0xFFFFFF)
+		gpu.drawText(0, y, msg)
+		gpu.flushBuffer()
+	end
+	y = y + 1
 end
 
 return init, update, quit
