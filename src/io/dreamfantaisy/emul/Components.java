@@ -5,7 +5,7 @@ import io.dreamfantaisy.emul.base.Keyboard;
 public class Components {
 
 	static {
-		COMPONENTS = new Component[16];
+		COMPONENTS = new Component[64];
 	}
 	
 	public static void init() {

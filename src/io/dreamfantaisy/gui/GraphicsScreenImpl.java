@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
@@ -20,7 +22,7 @@ import javax.swing.JComponent;
 import io.dreamfantaisy.Bits;
 import io.dreamfantaisy.emul.IGraphicsScreen;
 
-public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, java.awt.event.KeyListener {
+public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, java.awt.event.KeyListener, MouseMotionListener, java.awt.event.MouseListener {
 
 	private VolatileImage out;
 	private Graphics2D g2d;
@@ -28,6 +30,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 
 	private ArrayList<BufferedImage> images = new ArrayList<>();
 	private ArrayList<KeyListener> keyListeners = new ArrayList<>();
+	private ArrayList<MouseListener> mouseListeners = new ArrayList<>();
 	
 	private char[][] textVideoBuffer; // YX buffer
 	private int[][] textVideoRGBBuffer;
@@ -35,7 +38,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	private Font font;
 
 	public void paintComponent(Graphics g) {
-		g.drawImage(out, 0, 0, getWidth(), getHeight(), null);
+		g.drawImage(out, ((getWidth() - out.getWidth()) / 2), ((getHeight() - out.getHeight()) / 2), null);
 	}
 	
 	@Override
@@ -205,6 +208,65 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 		} else if (mode == MODE_PGPU) {
 			textVideoBuffer = null;
 			setResolution(getMaxWidth(), getMaxHeight());
+		}
+	}
+
+	@Override
+	public void addMouseListener(MouseListener lis) {
+		mouseListeners.add(lis);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		for (MouseListener lis : mouseListeners) {
+			lis.mousePressed();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		for (MouseListener lis : mouseListeners) {
+			lis.mouseReleased();
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		int ox = ((getWidth() - out.getWidth()) / 2);
+		int oy = ((getHeight() - out.getHeight()) / 2);
+		for (MouseListener lis : mouseListeners) {
+			int x = e.getX() - ox;
+			int y = e.getY() - oy;
+			if (x < 0 || x > out.getWidth())
+				break;
+			if (y < 0 || y > out.getHeight())
+				break;
+			
+			lis.mouseMoved(x, y);
+		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		int ox = ((getWidth() - out.getWidth()) / 2);
+		int oy = ((getHeight() - out.getHeight()) / 2);
+		for (MouseListener lis : mouseListeners) {
+			int x = e.getX() - ox;
+			int y = e.getY() - oy;
+			if (x < 0 || x > out.getWidth())
+				break;
+			if (y < 0 || y > out.getHeight())
+				break;
+			
+			lis.mouseMoved(x, y);
 		}
 	}
 

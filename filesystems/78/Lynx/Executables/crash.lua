@@ -1,3 +1,3 @@
 -- Crashes the system
-_G.print("Crashing the system..")
---dsfkkfdspo.sdfkfdifdp()
+print("Crashing the system..")
+dsfkkfdspo.sdfkfdifdp() -- Random function to be sure crash occurs

@@ -12,10 +12,11 @@ import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import java.awt.Component;
 import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JToolBar;
-import com.jidesoft.swing.JideButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
@@ -25,29 +26,28 @@ import javax.swing.JMenuItem;
 public class InterfaceUI extends JFrame {
 
 	 static JPanel contentPane;
-	 static JideButton jdbtnStop = null;
-	 static JideButton jdbtnRun = null;
+	 static JMenuItem btnStop = null;
+	 static JMenuItem btnRun = null;
 
 	/**
 	 * Create the frame.
 	 */
 	public InterfaceUI() {
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-		setTitle("DreamFantaisy Playground");
+		setTitle("DreamFantaisy: Playground");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1280, 720);
+		setSize(1280, 720);
+		setLocationRelativeTo(null);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-		
+		JMenu mnEmu = new JMenu("Playground");
+		menuBar.add(mnEmu);
 		JMenuItem mntmLoadRemovableMedium = new JMenuItem("Load Removable Medium..");
 		mnFile.add(mntmLoadRemovableMedium);
-		
-		JSeparator separator = new JSeparator();
-		mnFile.add(separator);
-		
+		mnFile.addSeparator();
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener((event) -> {
 			System.exit(0);
@@ -58,35 +58,30 @@ public class InterfaceUI extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		JToolBar toolBar = new JToolBar();
-		toolBar.setFloatable(false);
-		contentPane.add(toolBar, BorderLayout.NORTH);
-		
-		jdbtnRun = new JideButton();
-		jdbtnRun.addActionListener(new ActionListener() {
+		btnRun = new JMenuItem("Run");
+		btnRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DreamFantaisy.getInstance().start();
-				jdbtnRun.setEnabled(false);
-				jdbtnStop.setEnabled(true);
+				btnRun.setEnabled(false);
+				btnStop.setEnabled(true);
 			}
 		});
-		jdbtnRun.setText("Run");
-		jdbtnRun.setButtonStyle(JideButton.TOOLBOX_STYLE);
-		toolBar.add(jdbtnRun);
+		mnEmu.add(btnRun);
 		
-		jdbtnStop = new JideButton("Stop");
-		jdbtnStop.addActionListener(new ActionListener() {
+		btnStop = new JMenuItem("Stop");
+		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jdbtnRun.setEnabled(true);
-				jdbtnStop.setEnabled(false);
+				btnStop.setEnabled(true);
+				btnStop.setEnabled(false);
 				DreamFantaisy.getInstance().stop();
 			}
 		});
-		jdbtnStop.setEnabled(false);
-		jdbtnStop.setButtonStyle(JideButton.TOOLBOX_STYLE);
-		toolBar.add(jdbtnStop);
+		btnStop.setEnabled(false);
+		mnEmu.add(btnStop);
 		
-		JToggleButton vmPause = new JToggleButton("Pause");
+		mnEmu.addSeparator();
+		
+		JCheckBoxMenuItem vmPause = new JCheckBoxMenuItem("Pause");
 		vmPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (DreamFantaisy.getInstance().getComputer() != null) {
@@ -94,11 +89,7 @@ public class InterfaceUI extends JFrame {
 				}
 			}
 		});
-		
-		Component horizontalGlue = Box.createHorizontalGlue();
-		toolBar.add(horizontalGlue);
-		toolBar.add(vmPause);
-		
+		mnEmu.add(vmPause);
 		
 	}
 

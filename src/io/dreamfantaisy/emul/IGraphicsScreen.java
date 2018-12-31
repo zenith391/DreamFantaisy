@@ -2,9 +2,15 @@ package io.dreamfantaisy.emul;
 
 public interface IGraphicsScreen {
 
-	public static abstract interface KeyListener {
+	public static interface KeyListener {
 		public void keyPressed(int code, char ch);
 		public void keyReleased(int code, char ch);
+	}
+	
+	public static interface MouseListener {
+		public void mouseMoved(int x, int y);
+		public void mousePressed();
+		public void mouseReleased();
 	}
 	
 	public static final int MODE_CONSOLE = 1337; // hackerz
@@ -23,6 +29,7 @@ public interface IGraphicsScreen {
 	public void init();
 	public void refresh();
 	public void addKeyListener(KeyListener lis);
+	public void addMouseListener(MouseListener lis);
 	public void setMode(int mode);
 	
 }

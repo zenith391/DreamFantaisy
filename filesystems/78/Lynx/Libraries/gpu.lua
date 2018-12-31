@@ -2,7 +2,7 @@
 
 local lib = {}
 local color = 0x000000
-local gpu = computer.components()[2]
+local gpu = computer.components()[3]
 local currentMode = 1
 
 function lib.setColor(rgbColor)

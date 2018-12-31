@@ -7,7 +7,7 @@ function require(lib)
 	end
 	local lb, err = dofile("Lynx/Libraries/" .. lib .. ".lua")
 	if err ~= nil then
-		osdbg("error while loading lib: " .. err)
+		printerr("Could not load library: " .. err)
 	end
 	loaded[lib] = lb
 	return loaded[lib]
@@ -68,6 +68,7 @@ local gpu = require("gpu")
 local gop = require("SpeedX/Operations")
 local cube, cube_name, cube_gmode = dofile("Users/Root/Screensavers/moving_cube.lua")
 local kbd = require("keyboard")
+local ms = require("mouse")
 
 osdbg("[DEBUG] LynxOS booting...")
 
@@ -83,26 +84,38 @@ local function resetTime()
 end
 
 require("event").register("keyPressed", resetTime)
+require("event").register("mouseMoved", resetTime)
 
-
-while run do
-	if timeWithoutAction > 1280 then
-		if cube_gmode == 1 then
+local ok, err = pcall(function()
+	while run do
+		if timeWithoutAction > 1280 then
+			if cube_gmode == 1 then
+				gpu.switchToConsole()
+			end
+			if cube_gmode == 2 then
+				gpu.switchToVideo()
+			end
+			cube(gpu)
+		else
 			gpu.switchToConsole()
+			citfupdate()
 		end
-		if cube_gmode == 2 then
-			gpu.switchToVideo()
+		-- event processing
+		kbd.driverInterrupt()
+		ms.driverInterrupt()
+		if gop ~= nil then -- 
+			gop.process()
 		end
-		cube(gpu)
-	else
-		gpu.switchToConsole()
-		citfupdate()
+		timeWithoutAction = timeWithoutAction + 1
+		computer.sleep(16) -- around 60 iterations per second
 	end
-	-- event processing
-	kbd.driverInterrupt()
-	if gop ~= nil then -- 
-		gop.process()
-	end
-	timeWithoutAction = timeWithoutAction + 1
-	computer.sleep(16) -- around 60 iterations per second
+end)
+if not ok then
+	gpu.setColor(0xFF0000)
+	gpu.drawText(31, 11, "/-=-=-=-=-=-=-=-=\\")
+	gpu.drawText(31, 12, "|Guru Meditation!|")
+	gpu.drawText(31, 13, "|                |")
+	gpu.drawText(31, 14, "\\=-=-=-=-=-=-=-=-/")
+	gpu.flushBuffer()
+	error(err)
 end

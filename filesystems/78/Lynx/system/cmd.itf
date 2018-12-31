@@ -46,7 +46,10 @@ local function process(cmd)
 	for k, v in pairs(PATH) do
 		if computer.exists(v .. cmd) then
 			quit()
-			local ret, err = dofile(cmd)
+			local ret, err = dofile(v .. cmd)
+			if err ~= nil then
+				printerr("Error: " .. err)
+			end
 			init()
 			return
 		end

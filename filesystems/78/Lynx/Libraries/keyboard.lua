@@ -1,7 +1,7 @@
 local lib = {}
 local event = require("event")
 lib.keys = {}
-local keyboard = computer.components()[1]
+local keyboard = computer.components()[2]
 lib.maj = false
 lib.ctrl = false
 

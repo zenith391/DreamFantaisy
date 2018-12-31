@@ -19,11 +19,4 @@ in lua ? That's what this software used to. Within it, create your own softwares
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.jidesoft</groupId>
-  		<artifactId>jide-oss</artifactId>
-  		<version>3.6.18</version>
-  	</dependency>
-  </dependencies>
 </project>

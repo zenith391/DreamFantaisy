@@ -1,41 +1,38 @@
 package io.dreamfantaisy.gui;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.Color;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
-
-import com.jidesoft.plaf.LookAndFeelFactory;
-import com.jidesoft.swing.JideButton;
 
 import io.dreamfantaisy.emul.Components;
 import io.dreamfantaisy.emul.Computer;
 import io.dreamfantaisy.emul.Computer.CpState;
 import io.dreamfantaisy.emul.base.GPU;
 import io.dreamfantaisy.emul.base.Keyboard;
+import io.dreamfantaisy.emul.base.Mouse;
 
 public class DreamFantaisy {
 
 	private Computer computer;
 	private InterfaceUI gui;
+	private JFrame frame;
 	private static DreamFantaisy instance;
 	private GraphicsScreenImpl gpuImpl;
 	private JLabel debug;
 	
 	private Keyboard k = null;
+	private Mouse m = null;
+	
+	public static boolean playgroundMode;
 	
 	public static void main(String[] args) {
-		instance = new DreamFantaisy();
+		instance = new DreamFantaisy(args);
 	}
 	
 	public void start() {
@@ -43,12 +40,18 @@ public class DreamFantaisy {
 		if (k == null) {
 			k = new Keyboard(gpuImpl);
 		}
+		if (m == null) {
+			m = new Mouse(gpuImpl);
+		}
 		Components.setComponent(k, 1);
 		Components.setComponent(new GPU(gpuImpl), 2);
+		Components.setComponent(m, 4);
 		Thread th = new Thread(() -> {
 			CpState state = computer.run((8 * (1024 * 1024)));
-			InterfaceUI.jdbtnRun.setEnabled(true);
-			InterfaceUI.jdbtnStop.setEnabled(false);
+			if (gui != null) {
+				InterfaceUI.btnRun.setEnabled(true);
+				InterfaceUI.btnStop.setEnabled(false);
+			}
 			if (state.crashed) {
 				JOptionPane.showMessageDialog(gui, "Your DreamFantaisy® computer had to stop!\n" // dreamfantaisy is not registed (by me), it is just for a little more immersion.
 				                                 + "Iteration N°: " + state.iteration, "Guru Meditation!", JOptionPane.ERROR_MESSAGE);
@@ -65,39 +68,63 @@ public class DreamFantaisy {
 		computer.stop();
 	}
 	
-	private DreamFantaisy() {
-		
-		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
-			if (lafi.getName().equals("Windows Classic")) {
-				try {
-					UIManager.setLookAndFeel(lafi.getClassName());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e) {
-					e.printStackTrace();
-				}
+	private DreamFantaisy(String[] args) {
+		for (String arg : args) {
+			if (arg.equals("--playground")) {
+				playgroundMode = true;
 			}
 		}
 		
-		gui = new InterfaceUI();
+//		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
+//			if (lafi.getName().equals("Windows Classic")) {
+//				try {
+//					UIManager.setLookAndFeel(lafi.getClassName());
+//				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//						| UnsupportedLookAndFeelException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+		
+		if (playgroundMode) {
+			gui = new InterfaceUI();
+			frame = gui;
+		} else {
+			frame = new JFrame();
+			frame.setSize(1280, 720);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setTitle("DreamFantaisy");
+			frame.setLocationRelativeTo(null);
+		}
+		frame.getContentPane().setBackground(new Color(0x2D2D2D));
 		debug = new JLabel("...");
 		gpuImpl = new GraphicsScreenImpl();
 		gpuImpl.init();
-		gpuImpl.fillRect(0, 0, gpuImpl.getMaxWidth(), gpuImpl.getMaxHeight(), 0xFFFFFF);
+		gpuImpl.fillRect(0, 0, gpuImpl.getMaxWidth(), gpuImpl.getMaxHeight(), 0x000000);
 		gpuImpl.refresh();
-		gui.add(BorderLayout.CENTER, gpuImpl);
-		gui.add(BorderLayout.SOUTH, debug);
-		gui.addKeyListener(gpuImpl);
+		frame.add(BorderLayout.CENTER, gpuImpl);
+		if (playgroundMode) frame.add(BorderLayout.SOUTH, debug);
+		frame.addKeyListener(gpuImpl);
+		gpuImpl.addMouseMotionListener(gpuImpl);
+		gpuImpl.addMouseListener(gpuImpl);
 		gpuImpl.addKeyListener(gpuImpl);
 		gpuImpl.requestFocus();
-		gui.setVisible(true);
+		frame.setVisible(true);
+		
 		Thread th2 = new Thread(() -> {
+			debug.setForeground(Color.WHITE);
 			while (true) {
-				gpuImpl.repaint();
 				if (computer != null && computer.isStarted()) {
 					debug.setText("Used RAM: " + computer.getUsedMemory() / 1024 + "/" + computer.getTotalMemory() / 1024 + "KB, " +
 					             "Iteration: " + computer.getState().iteration);
 					debug.repaint();
-					gpuImpl.requestFocus();
+					frame.requestFocus();
 				}
 				try {
 					Thread.sleep(1000/60);
@@ -106,7 +133,13 @@ public class DreamFantaisy {
 				}
 			}
 		});
-		th2.start();
+		if (playgroundMode) {
+			th2.start();
+		}
+		
+		if (!playgroundMode) {
+			start();
+		}
 	}
 	
 	public static final DreamFantaisy getInstance() {

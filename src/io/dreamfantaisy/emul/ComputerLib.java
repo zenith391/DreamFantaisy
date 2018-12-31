@@ -35,13 +35,11 @@ public class ComputerLib {
 			public int invoke(LuaState lua) {
 				lua.newTable();
 				int ri = 1;
-				for (int i = 0; i < 16; i++) {
-					if (Components.COMPONENTS[i] != null) {
-						lua.pushNumber(ri);
-						lua.pushJavaObject(Components.COMPONENTS[i]);
-						lua.rawSet(-3);
-						ri++;
-					}
+				for (int i = 0; i < 64; i++) {
+					lua.pushNumber(ri);
+					lua.pushJavaObject(Components.COMPONENTS[i]);
+					lua.rawSet(-3);
+					ri++;
 				}
 				
 				return 1;

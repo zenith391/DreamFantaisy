@@ -9,16 +9,16 @@ return function(gpu)
 	local vy = math.sin(ang)
 	animX = animX + vx * speed
 	animY = animY + vy * speed
-	if animX > 1180 then
-		animX = 1180
+	if animX > 540 then
+		animX = 540
 		ang = math.random(ang - 10, ang + 10)
 	end
 	if animX < 0 then
 		animX = 0
 		ang = math.random(ang - 10, ang + 10)
 	end
-		if animY > 620 then
-		animY = 620
+		if animY > 380 then
+		animY = 380
 		ang = math.random(ang - 10, ang + 10)
 	end
 	if animY < 0 then
