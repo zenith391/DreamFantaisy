@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>digitalsnakesoftware</groupId>
-  <artifactId>luapc</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>LuaPC</name>
-  <description>Have you ever wanted to have thoses 95' PCs ? What if they were coded 
-in lua ? That's what this software used to. Within it, create your own softwares and live the 100% optimizations era of 95' computers !</description>
+  <artifactId>dreamfantaisy</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <name>DreamFantaisy</name>
+  <description>Have you ever wanted to have thoses 90' PCs ? What if they were coded 
+in lua ? That's what this software used to. Within it, create your own softwares and live the 100% optimizations era of 90' computers !</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -19,4 +18,6 @@ in lua ? That's what this software used to. Within it, create your own softwares
       </plugin>
     </plugins>
   </build>
+  <url>https://github.com/zenith391/DreamFantaisy</url>
+  <groupId>io.zenith391</groupId>
 </project>

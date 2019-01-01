@@ -45,6 +45,10 @@ function lib.sendULLOperation(num)
 	gpu:sendDirect(num)
 end
 
+function lib.getGPUComponent()
+	return gpu
+end
+
 function lib.drawText(x, y, text)
 	gpu:sendDirect(54)
 	gpu:sendDirect(x)

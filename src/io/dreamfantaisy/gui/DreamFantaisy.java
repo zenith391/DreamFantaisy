@@ -75,22 +75,21 @@ public class DreamFantaisy {
 			}
 		}
 		
-//		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
-//			if (lafi.getName().equals("Windows Classic")) {
-//				try {
-//					UIManager.setLookAndFeel(lafi.getClassName());
-//				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-//						| UnsupportedLookAndFeelException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
+		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
+			if (lafi.getName().equals("Windows Classic")) {
+				try {
+					UIManager.setLookAndFeel(lafi.getClassName());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//				| UnsupportedLookAndFeelException e1) {
+//			e1.printStackTrace();
+//		}
 		
 		if (playgroundMode) {
 			gui = new InterfaceUI();

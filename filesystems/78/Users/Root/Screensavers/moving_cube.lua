@@ -30,5 +30,4 @@ return function(gpu)
 	gpu.setColor(0xAFAFAF)
 	gpu.fillRect(animX, animY, 100, 100)
 	gpu.flushBuffer()
-	computer.sleep(16)
 end, "Moving Cube", 2

@@ -1,3 +1,7 @@
+_G.OSDATA = {}
+_G.OSDATA.NAME = "LynxOS"
+_G.OSDATA.VERSION = "0.1"
+
 local loaded = {}
 local run = true
 
@@ -5,7 +9,7 @@ function require(lib)
 	if loaded[lib] ~= nil then
 		return loaded[lib]
 	end
-	local lb, err = dofile("Lynx/Libraries/" .. lib .. ".lua")
+	local err, lb = dofile("Lynx/Libraries/" .. lib .. ".lua")
 	if err ~= nil then
 		printerr("Could not load library: " .. err)
 	end
@@ -32,9 +36,9 @@ end
 function dofile(file, drive)
 	local f, err = loadfile(file, drive)
 	if err ~= nil or f == nil then
-		return nil, err
+		return err, nil
 	end
-	return f()
+	return nil, f()
 end
 
 function table.getn(table)
@@ -73,7 +77,7 @@ local ms = require("mouse")
 osdbg("[DEBUG] LynxOS booting...")
 
 osdbg("[DEBUG] Loading CLI at \"Lynx/system/cmd.itf\"")
-local citfboot, citfupdate, citfquit = dofile("Lynx/system/cmd.itf")
+local err, citfboot, citfupdate, citfquit = dofile("Lynx/system/cmd.itf")
 osdbg("[DEBUG] LynxOS booted!")
 osdbg("[DEBUG] Booting CLI")
 citfboot()
@@ -95,7 +99,7 @@ local ok, err = pcall(function()
 			if cube_gmode == 2 then
 				gpu.switchToVideo()
 			end
-			cube(gpu)
+			--cube(gpu)
 		else
 			gpu.switchToConsole()
 			citfupdate()

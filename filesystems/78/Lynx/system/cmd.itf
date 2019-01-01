@@ -10,7 +10,8 @@ local keyboardCode = -1
 local currCmd = ""
 local y = 0
 
-local PATH = {"", "Lynx/system/", "Lynx/Executables/"}
+local PATH = {"", "Lynx/system/", "Lynx/Executables/cli/", "Lynx/Executables/"}
+local PATHEXT = {".lua", ""}
 
 
 -- Internal functions
@@ -44,14 +45,20 @@ end
 
 local function process(cmd)
 	for k, v in pairs(PATH) do
-		if computer.exists(v .. cmd) then
-			quit()
-			local ret, err = dofile(v .. cmd)
-			if err ~= nil then
-				printerr("Error: " .. err)
+		for j, w in pairs(PATHEXT) do
+			if computer.exists(v .. cmd .. w) then
+				quit()
+				local err, ret = dofile(v .. cmd .. w)
+				if err ~= nil then
+					printerr("Error: " .. err)
+					return
+				end
+				if ret ~= nil then
+					ret()
+				end
+				init()
+				return
 			end
-			init()
-			return
 		end
 	end
 	printerr("No \"" .. cmd .. "\" found!")

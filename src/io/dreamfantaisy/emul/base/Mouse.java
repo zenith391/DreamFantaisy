@@ -32,11 +32,12 @@ public class Mouse extends Component implements MouseListener {
 	
 	@Override
 	public void sendDirect(int b) {
-		
+		super.sendDirect(b);
 	}
 	
 	@Override
 	public int receive() {
+		super.receive();
 		if (state == 1) {
 			state = 4;
 			return 1;

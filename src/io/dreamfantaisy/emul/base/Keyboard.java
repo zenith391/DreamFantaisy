@@ -29,6 +29,7 @@ public class Keyboard extends Component implements KeyListener {
 	
 	@Override
 	public void sendDirect(int b) {
+		super.sendDirect(b);
 		if (b == 101) {
 			// caps   =  ON
 			caps = true;
@@ -53,6 +54,7 @@ public class Keyboard extends Component implements KeyListener {
 	
 	@Override
 	public int receive() {
+		super.receive();
 		if (isPressed) {
 			state = 1;
 			isPressed = false;

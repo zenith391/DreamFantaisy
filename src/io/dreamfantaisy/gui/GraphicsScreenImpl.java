@@ -94,7 +94,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	@Override
 	public int storeImage(int encoding, int[] data) {
 		BufferedImage img = decode(encoding, data);
-		images.add(decode(encoding, data));
+		images.add(img);
 		return images.indexOf(img);
 	}
 

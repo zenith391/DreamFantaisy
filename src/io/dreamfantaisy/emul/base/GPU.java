@@ -1,9 +1,21 @@
 
 package io.dreamfantaisy.emul.base;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import io.dreamfantaisy.emul.Component;
 import io.dreamfantaisy.emul.IGraphicsScreen;
 
+/**
+ * MME = Multimedia Graphical Extensions<br/>
+ * Encodings: 0 = RGB, 1 = RGBA
+ * @author zenith391
+ *
+ */
 public class GPU extends Component {
 
 	private IGraphicsScreen gs;
@@ -14,6 +26,57 @@ public class GPU extends Component {
 	
 	public GPU(IGraphicsScreen igs) {
 		gs = igs;
+	}
+	
+	/**
+	 * MGE = Multimedia Graphical Extensions
+	 */
+	public boolean hasMGE() {
+		return true;
+	}
+	
+	public int storeImage(int encoding, int[] data) {
+		return gs.storeImage(encoding, data);
+	}
+	
+	/**
+	 * Number of images that can be stored at the same time
+	 */
+	public int getMaxImages() {
+		return 64;
+	}
+	
+	public void drawStoredImage(int id) {
+		
+	}
+	
+	/**
+	 * Image loading accelerator. Part of: Multimedia Graphical Extensions
+	 * @param data raw binary data (png, bmp, jpeg, tiff, etc.)
+	 * @return accelerated RGB image
+	 */
+	public int[] loadImage(String data) {
+		if (hasMGE()) {
+			try {
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(data.getBytes()));
+				int[] array = new int[2 + (img.getWidth() * img.getHeight())];
+				array[0] = img.getWidth();
+				array[1] = img.getHeight();
+				int i = 0;
+				for (int j = 0; j < img.getWidth(); j++) {
+					for (int k = 0; k < img.getHeight(); k++) {
+						i++;
+						array[2 + i] = img.getRGB(j, k);
+					}
+				}
+				return array;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new int[0];
+			}
+		} else {
+			return new int[0];
+		}
 	}
 	
 	@Override
