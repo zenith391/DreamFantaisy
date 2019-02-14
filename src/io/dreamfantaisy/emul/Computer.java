@@ -99,11 +99,14 @@ public class Computer {
 				try {
 					state.iteration++;
 					luaState.resume(1, 0);
-				} catch (LuaRuntimeException e) {
-					System.err.println("Lua error!\nLua Stacktrace:");
-					for (LuaStackTraceElement lst : e.getLuaStackTrace()) {
-						System.err.println("\t" + lst.getSourceName() + ";" + lst.getFunctionName() +
-								":" + lst.getLineNumber());
+				} catch (RuntimeException e) {
+					if (e instanceof LuaRuntimeException) {
+						System.err.println("Lua error!\nLua Stacktrace:");
+						LuaRuntimeException le = (LuaRuntimeException) e;
+						for (LuaStackTraceElement lst : le.getLuaStackTrace()) {
+							System.err.println("\t" + lst.getSourceName() + ";" + lst.getFunctionName() +
+									":" + lst.getLineNumber());
+						}
 					}
 					System.err.println("Java Stacktrace:");
 					e.printStackTrace();

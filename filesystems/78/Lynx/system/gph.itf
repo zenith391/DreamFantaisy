@@ -1,0 +1,32 @@
+-- Graphical User Interface (GUI) file for Lynx
+
+local gpu = require("gpu")
+local draw = require("SpeedX/Draw")
+local ops = require("SpeedX/Operations")
+local db = {}
+local dbctx = nil
+local mctx = nil
+
+local init = function()
+	gpu.switchToVideo()
+	mctx = draw.createAcceleratedContext(0, 0, 640, 480)
+	dbctx = draw.createRasterContext(draw.newImage(100, 100))
+	osdbg("[debug]: gui booted")
+	dbctx.color = 0xFFFFFF
+	dbctx.fillRect(1, 1, 50, 50)
+	osdbg("[debug]: image created")
+end
+
+local update = function()
+	--osdbg("render")
+	mctx.drawImage(10, 10, dbctx.data)
+	draw.flushContext(mctx)
+	ops.process()
+	gpu.flushBuffer()
+	--collectgarbage()
+end
+
+local quit = function()
+end
+
+return init, update, quit

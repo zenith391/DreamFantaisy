@@ -77,7 +77,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 		if (encoding == 0) {
 			int width = data[0];
 			int height = data[1];
-			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			int i = 0;
 			for (int j = 0; j < width; j++) {
 				for (int k = 0; k < height; k++) {
@@ -127,14 +127,15 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 		}
 		out = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 				.createCompatibleVolatileImage(width, height);
+		out.setAccelerationPriority(1f);
 		g2d = out.createGraphics();
 		g2d.setColor(Color.BLACK);
-		g2d.fillRect(0, 0, out.getWidth(), out.getHeight());
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		//g2d.fillRect(0, 0, out.getWidth(), out.getHeight(), width, height);
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override

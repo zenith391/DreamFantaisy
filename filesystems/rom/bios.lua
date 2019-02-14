@@ -3,14 +3,14 @@ local gpu = computer.components()[2]
 gpu:sendDirect(52)
 gpu:sendDirect(0)
 gpu:sendDirect(0)
-gpu:sendDirect(1280)
-gpu:sendDirect(720)
+gpu:sendDirect(640)
+gpu:sendDirect(480)
 gpu:sendDirect(0x000000)
 gpu:sendDirect(53)
---print(computer.getROMData())
 local bootPath = computer.loadFromDrive(computer.getROMData(), "boot.mbf")
---print("mbf path: " .. bootPath)
 local bootCode = computer.loadFromDrive(computer.getROMData(), bootPath)
+
+computer.sleep(1000)
 
 local f, err = load(bootCode, "=" .. bootPath, "t")
 if err ~= nil then

@@ -12,7 +12,7 @@ import io.dreamfantaisy.emul.IGraphicsScreen;
 
 /**
  * MME = Multimedia Graphical Extensions<br/>
- * Encodings: 0 = RGB, 1 = RGBA
+ * Images are always in RGBA
  * @author zenith391
  *
  */
@@ -36,18 +36,34 @@ public class GPU extends Component {
 	}
 	
 	public int storeImage(int encoding, int[] data) {
-		return gs.storeImage(encoding, data);
+		if (hasMGE()) {
+			return gs.storeImage(encoding, data);
+		} else {
+			return -1;
+		}
 	}
 	
 	/**
 	 * Number of images that can be stored at the same time
 	 */
 	public int getMaxImages() {
-		return 64;
+		if (hasMGE()) {
+			return 64;
+		} else {
+			return -1;
+		}
 	}
 	
-	public void drawStoredImage(int id) {
-		
+	public void drawStoredImage(int x, int y, int id) {
+		if (hasMGE()) {
+			gs.drawStoredImage(x, y, id);
+		}
+	}
+	
+	public void drawImage(int x, int y, int[] data) {
+		if (hasMGE()) {
+			gs.drawImage(x, y, 0, data);
+		}
 	}
 	
 	/**

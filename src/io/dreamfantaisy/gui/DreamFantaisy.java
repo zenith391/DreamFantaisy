@@ -6,6 +6,7 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -16,6 +17,7 @@ import io.dreamfantaisy.emul.Computer.CpState;
 import io.dreamfantaisy.emul.base.GPU;
 import io.dreamfantaisy.emul.base.Keyboard;
 import io.dreamfantaisy.emul.base.Mouse;
+import io.dreamfantaisy.emul.base.SerialPort;
 
 public class DreamFantaisy {
 
@@ -43,11 +45,12 @@ public class DreamFantaisy {
 		if (m == null) {
 			m = new Mouse(gpuImpl);
 		}
+		gpuImpl.requestFocus();
 		Components.setComponent(k, 1);
 		Components.setComponent(new GPU(gpuImpl), 2);
 		Components.setComponent(m, 4);
 		Thread th = new Thread(() -> {
-			CpState state = computer.run((8 * (1024 * 1024)));
+			CpState state = computer.run((int) (0.6f * (1024 * 1024)));
 			if (gui != null) {
 				InterfaceUI.btnRun.setEnabled(true);
 				InterfaceUI.btnStop.setEnabled(false);
@@ -68,6 +71,7 @@ public class DreamFantaisy {
 		computer.stop();
 	}
 	
+	static JTabbedPane tabbedPane;
 	private DreamFantaisy(String[] args) {
 		for (String arg : args) {
 			if (arg.equals("--playground")) {
@@ -107,7 +111,21 @@ public class DreamFantaisy {
 		gpuImpl.init();
 		gpuImpl.fillRect(0, 0, gpuImpl.getMaxWidth(), gpuImpl.getMaxHeight(), 0x000000);
 		gpuImpl.refresh();
-		frame.add(BorderLayout.CENTER, gpuImpl);
+		
+		if (playgroundMode) {
+			tabbedPane = new JTabbedPane();
+			tabbedPane.addTab("screen", gpuImpl);
+			frame.add(BorderLayout.CENTER, tabbedPane);
+			
+			// add serial0
+			SerialPort port = new SerialPort();
+			Components.setComponent(port, 50);
+			SerialPortUI portui = new SerialPortUI(port, 0);
+			portui.start();
+			tabbedPane.addTab("serial0", portui);
+		} else {
+			frame.add(BorderLayout.CENTER, gpuImpl);
+		}
 		if (playgroundMode) frame.add(BorderLayout.SOUTH, debug);
 		frame.addKeyListener(gpuImpl);
 		gpuImpl.addMouseMotionListener(gpuImpl);
@@ -123,7 +141,7 @@ public class DreamFantaisy {
 					debug.setText("Used RAM: " + computer.getUsedMemory() / 1024 + "/" + computer.getTotalMemory() / 1024 + "KB, " +
 					             "Iteration: " + computer.getState().iteration);
 					debug.repaint();
-					frame.requestFocus();
+					//frame.requestFocus();
 				}
 				try {
 					Thread.sleep(1000/60);

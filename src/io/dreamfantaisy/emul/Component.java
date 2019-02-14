@@ -8,11 +8,6 @@ package io.dreamfantaisy.emul;
 public class Component {
 	
 	public void sendDirect(int b) {
-//		try {
-//			Thread.sleep(2);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	public void sendUrgent(int b) {
@@ -21,11 +16,6 @@ public class Component {
 	}
 	
 	public int receive() {
-//		try {
-//			Thread.sleep(1);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 		return 0;
 	}
 

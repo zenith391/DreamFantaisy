@@ -38,6 +38,7 @@ public class ComputerLib {
 				for (int i = 0; i < 64; i++) {
 					lua.pushNumber(ri);
 					lua.pushJavaObject(Components.COMPONENTS[i]);
+					//System.out.println(i + ": " + Components.COMPONENTS[i]);
 					lua.rawSet(-3);
 					ri++;
 				}
@@ -143,6 +144,9 @@ public class ComputerLib {
 				String str = lua.toString(2);
 				BufferedInputStream bis = null;
 				try {
+					if (drv.equals("rom")) {
+						throw new Exception();
+					}
 					bis = new BufferedInputStream(new FileInputStream("filesystems/" + drv + "/" + str));
 					byte[] b = bis.readAllBytes();
 					StringBuilder sb = new StringBuilder();

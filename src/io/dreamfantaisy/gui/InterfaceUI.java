@@ -22,12 +22,14 @@ import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JMenuItem;
+import javax.swing.JTabbedPane;
 
 public class InterfaceUI extends JFrame {
 
 	 static JPanel contentPane;
 	 static JMenuItem btnStop = null;
 	 static JMenuItem btnRun = null;
+	 static JTabbedPane tabbedPane;
 
 	/**
 	 * Create the frame.
@@ -57,6 +59,9 @@ public class InterfaceUI extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		btnRun = new JMenuItem("Run");
 		btnRun.addActionListener(new ActionListener() {

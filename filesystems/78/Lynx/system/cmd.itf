@@ -31,11 +31,17 @@ local keyboardListener = function(name, char, ch)
 end
 
 -- Interface functions
-local init = function()
-	gpu.switchToConsole()
+local function registerListeners()
 	event.register("keyPressed", keyboardListener)
 	event.register("keyReleased", keyboardListener)
+end
+
+local init = function()
+	gpu.switchToConsole()
+	registerListeners()
 	osdbg("[DEBUG] CLI booted")
+	print(_G.OSDATA.NAME .. " Disk Operation Environment ".. _G.OSDATA.VERSION)
+	print("(c) MicroShit, 1974-1985") -- TODO fix: ©
 end
 
 local quit = function()
@@ -43,25 +49,41 @@ local quit = function()
 	event.cancel("keyReleased", keyboardListener)
 end
 
+local function mysplit(inputstr, sep)
+        if sep == nil then
+                sep = "%s"
+        end
+        local t={}
+        for str in string.gmatch(inputstr, "[^"..sep.."]+") do
+                table.insert(t, str)
+        end
+        return t
+end
+
 local function process(cmd)
+	local argv = mysplit(cmd, "%s")
+	local argc = table.maxn(argv)
+	if argc == 0 then
+		argv = {""}
+	end
 	for k, v in pairs(PATH) do
 		for j, w in pairs(PATHEXT) do
-			if computer.exists(v .. cmd .. w) then
+			if computer.exists(v .. argv[1] .. w) then
 				quit()
-				local err, ret = dofile(v .. cmd .. w)
+				local err, ret = dofile(v .. argv[1] .. w)
 				if err ~= nil then
 					printerr("Error: " .. err)
 					return
 				end
 				if ret ~= nil then
-					ret()
+					ret(argc, argv)
 				end
-				init()
+				registerListeners()
 				return
 			end
 		end
 	end
-	printerr("No \"" .. cmd .. "\" found!")
+	printerr("No \"" .. argv[1] .. "\" found!")
 	
 end
 
@@ -75,7 +97,7 @@ local update = function()
 			return
 		end
 		if keyboardCode == 8 and currCmd:len() > 0 then
-			gpu.drawText(0, y, string.rep(string.char(32), currCmd:len()))
+			gpu.drawText(currCmd:len(), y, " ")
 			currCmd = currCmd:sub(1, currCmd:len()-1)
 			keyboardCode = -1;
 			gpu.flushBuffer()

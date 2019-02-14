@@ -11,7 +11,7 @@ function require(lib)
 	end
 	local err, lb = dofile("Lynx/Libraries/" .. lib .. ".lua")
 	if err ~= nil then
-		printerr("Could not load library: " .. err)
+		osdbg("Could not load library: " .. err)
 	end
 	loaded[lib] = lb
 	return loaded[lib]
@@ -33,15 +33,15 @@ function loadfile(file, drive)
 	return func, nil
 end
 
-function dofile(file, drive)
+function dofile(file, drive, ...)
 	local f, err = loadfile(file, drive)
 	if err ~= nil or f == nil then
 		return err, nil
 	end
-	return nil, f()
+	return nil, f(...)
 end
 
-function table.getn(table)
+function table.maxn(table)
   local i = 0
   for k, v in pairs(table) do
     if k > i then
@@ -89,7 +89,10 @@ end
 
 require("event").register("keyPressed", resetTime)
 require("event").register("mouseMoved", resetTime)
-
+local serialapi = require("serial")
+local serial = serialapi.forPort(51)
+serial.write("h")
+serial.write("i")
 local ok, err = pcall(function()
 	while run do
 		if timeWithoutAction > 1280 then
@@ -102,6 +105,7 @@ local ok, err = pcall(function()
 			--cube(gpu)
 		else
 			gpu.switchToConsole()
+			--gpu.switchToVideo()
 			citfupdate()
 		end
 		-- event processing
@@ -109,12 +113,25 @@ local ok, err = pcall(function()
 		ms.driverInterrupt()
 		if gop ~= nil then -- 
 			gop.process()
+			gpu.flushBuffer()
 		end
 		timeWithoutAction = timeWithoutAction + 1
+		while serial.isReadAvailable() do
+			local ch = serial.read()
+			serial.write(ch)
+			if ch ~= 0 then
+				--require("event").fireEvent("keyPressed", ch, ch)
+				citfupdate()
+			else
+				--require("event").fireEvent("keyReleased", 0, 0)
+				citfupdate()
+			end
+		end
 		computer.sleep(16) -- around 60 iterations per second
 	end
 end)
 if not ok then
+	gpu.switchToConsole()
 	gpu.setColor(0xFF0000)
 	gpu.drawText(31, 11, "/-=-=-=-=-=-=-=-=\\")
 	gpu.drawText(31, 12, "|Guru Meditation!|")
