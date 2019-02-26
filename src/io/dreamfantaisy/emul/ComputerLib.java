@@ -13,6 +13,7 @@ public class ComputerLib {
 	private int yieldAction;
 	private int yieldArg1;
 	private static long start;
+	private Computer comp;
 	
 	public int getYieldAction() {
 		return yieldAction;
@@ -26,7 +27,8 @@ public class ComputerLib {
 		this.yieldAction = 0;
 	}
 	
-	public ComputerLib(LuaState state) {
+	public ComputerLib(LuaState state, Computer comp) {
+		this.comp = comp;
 		start = System.currentTimeMillis();
 		state.newTable();
 		state.pushJavaFunction(new JavaFunction() {

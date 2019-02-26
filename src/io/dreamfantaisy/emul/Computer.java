@@ -2,6 +2,7 @@ package io.dreamfantaisy.emul;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import li.cil.repack.com.naef.jnlua.LuaRuntimeException;
 import li.cil.repack.com.naef.jnlua.LuaStackTraceElement;
@@ -17,6 +18,7 @@ public class Computer {
 	private boolean stop = false;
 	private boolean pause;
 	private CpState state;
+	private ArrayList<Drive> drives;
 	
 	public static class CpState {
 		public boolean crashed;
@@ -24,7 +26,7 @@ public class Computer {
 	}
 
 	public Computer() {
-		
+		this.drives = new ArrayList<>();
 	}
 	
 	public void stop() {
@@ -58,6 +60,18 @@ public class Computer {
 	public CpState getState() {
 		return state;
 	}
+	
+	public Drive[] getDrives() {
+		return drives.toArray(new Drive[drives.size()]);
+	}
+	
+	public void addDrive(Drive drive) {
+		drives.add(drive);
+	}
+	
+	public void removeDrive(Drive drive) {
+		drives.remove(drive);
+	}
 
 	public CpState run(int memory) {
 		state = new CpState();
@@ -88,7 +102,7 @@ public class Computer {
 			e.printStackTrace();
 		}
 		
-		ComputerLib lib = new ComputerLib(luaState);
+		ComputerLib lib = new ComputerLib(luaState, this);
 		
 		Components.init();
 

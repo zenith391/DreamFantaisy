@@ -11,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -47,7 +49,13 @@ public class InterfaceUI extends JFrame {
 		menuBar.add(mnFile);
 		JMenu mnEmu = new JMenu("Playground");
 		menuBar.add(mnEmu);
-		JMenuItem mntmLoadRemovableMedium = new JMenuItem("Load Removable Medium..");
+		JMenuItem mntmLoadRemovableMedium = new JMenuItem("Removable Mediums..");
+		mntmLoadRemovableMedium.addActionListener((event) -> {
+			MediumManager manager = new MediumManager();
+			manager.setModalityType(ModalityType.APPLICATION_MODAL);
+			manager.setLocationRelativeTo(InterfaceUI.this);
+			manager.setVisible(true);
+		});
 		mnFile.add(mntmLoadRemovableMedium);
 		mnFile.addSeparator();
 		JMenuItem mntmExit = new JMenuItem("Exit");

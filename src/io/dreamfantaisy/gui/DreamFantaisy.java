@@ -49,6 +49,9 @@ public class DreamFantaisy {
 		Components.setComponent(k, 1);
 		Components.setComponent(new GPU(gpuImpl), 2);
 		Components.setComponent(m, 4);
+		if  (!playgroundMode) {
+			
+		}
 		Thread th = new Thread(() -> {
 			CpState state = computer.run((int) (0.6f * (1024 * 1024)));
 			if (gui != null) {
@@ -80,7 +83,7 @@ public class DreamFantaisy {
 		}
 		
 		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
-			if (lafi.getName().equals("Windows Classic")) {
+			if (lafi.getName().equals("CDE/Motif")) {
 				try {
 					UIManager.setLookAndFeel(lafi.getClassName());
 				} catch (Exception e) {
