@@ -14,7 +14,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import io.dreamfantaisy.emul.Components;
 import io.dreamfantaisy.emul.Computer;
 import io.dreamfantaisy.emul.Computer.CpState;
-import io.dreamfantaisy.emul.base.GPU;
+import io.dreamfantaisy.emul.base.Graphics;
 import io.dreamfantaisy.emul.base.Keyboard;
 import io.dreamfantaisy.emul.base.Mouse;
 import io.dreamfantaisy.emul.base.SerialPort;
@@ -47,13 +47,15 @@ public class DreamFantaisy {
 		}
 		gpuImpl.requestFocus();
 		Components.setComponent(k, 1);
-		Components.setComponent(new GPU(gpuImpl), 2);
+		Components.setComponent(new Graphics(gpuImpl), 2);
 		Components.setComponent(m, 4);
 		if  (!playgroundMode) {
 			
 		}
 		Thread th = new Thread(() -> {
 			CpState state = computer.run((int) (0.6f * (1024 * 1024)));
+			gpuImpl.setMode(GraphicsScreenImpl.MODE_CONSOLE);
+			gpuImpl.refresh();
 			if (gui != null) {
 				InterfaceUI.btnRun.setEnabled(true);
 				InterfaceUI.btnStop.setEnabled(false);

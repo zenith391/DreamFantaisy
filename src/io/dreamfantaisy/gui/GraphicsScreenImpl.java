@@ -52,7 +52,7 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 			System.err.println("Error while loading font!");
 			e.printStackTrace();
 		}
-		
+		setMode(MODE_CONSOLE);
 	}
 
 	@Override
@@ -121,8 +121,8 @@ public class GraphicsScreenImpl extends JComponent implements IGraphicsScreen, j
 	@Override
 	public void setResolution(int width, int height) {
 		if (width > getMaxWidth() || height > getMaxHeight()) {
-			System.out.println("[GPU] Warning! OS intended to set a resolution higher than maximum supported"
-					+ " by GPU (" + getMaxWidth() + "x" + getMaxHeight() + ")");
+			System.out.println("[Graphics] Warning! OS intended to set a resolution higher than maximum supported"
+					+ " by Graphics (" + getMaxWidth() + "x" + getMaxHeight() + ")");
 			return;
 		}
 		out = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()

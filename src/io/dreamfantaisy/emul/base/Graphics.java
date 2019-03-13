@@ -16,7 +16,7 @@ import io.dreamfantaisy.emul.IGraphicsScreen;
  * @author zenith391
  *
  */
-public class GPU extends Component {
+public class Graphics extends Component {
 
 	private IGraphicsScreen gs;
 	private int op = 0;
@@ -24,7 +24,7 @@ public class GPU extends Component {
 	private int a1, a2, a3, a4, a5, a6;
 	private String str = "";
 	
-	public GPU(IGraphicsScreen igs) {
+	public Graphics(IGraphicsScreen igs) {
 		gs = igs;
 	}
 	
@@ -93,6 +93,18 @@ public class GPU extends Component {
 		} else {
 			return new int[0];
 		}
+	}
+	
+	public void fillRect(int x, int y, int width, int height, int color) {
+		gs.fillRect(x, y, width, height, color);
+	}
+	
+	public void text(int x, int y, String text, int color) {
+		gs.drawString(text, x, y, color);
+	}
+	
+	public void updateScreen() {
+		gs.refresh();
 	}
 	
 	@Override

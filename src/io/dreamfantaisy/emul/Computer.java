@@ -19,6 +19,23 @@ public class Computer {
 	private boolean pause;
 	private CpState state;
 	private ArrayList<Drive> drives;
+	private static String arch;
+	
+	static {
+		arch = "32";
+		if (System.getProperty("os.arch", "32").contains("64")) {
+			arch = "64";
+		}
+		NativeSupport.getInstance().setLoader(new Loader() {
+
+			@Override
+			public void load() {
+				System.out.println(arch + "-bit Lua library loading..");
+				System.loadLibrary("native." + arch);
+			}
+
+		});
+	}
 	
 	public static class CpState {
 		public boolean crashed;
@@ -75,14 +92,6 @@ public class Computer {
 
 	public CpState run(int memory) {
 		state = new CpState();
-		NativeSupport.getInstance().setLoader(new Loader() {
-
-			@Override
-			public void load() {
-				System.loadLibrary("native.64");
-			}
-
-		});
 		luaState = new LuaState(memory);
 		luaState.openLib(Library.BASE);
 		luaState.openLib(Library.BIT32);
@@ -92,7 +101,7 @@ public class Computer {
 		luaState.openLib(Library.STRING);
 		luaState.openLib(Library.TABLE);
 		luaState.openLib(Library.COROUTINE);
-		luaState.pop(7);
+		luaState.pop(luaState.getTop());
 		System.out.println("[DreamFantaisy] Running on Lua " + LuaState.lua_version());
 		System.out.println("=-=-=-=- Launching Computer =-=-=-=-=");
 
