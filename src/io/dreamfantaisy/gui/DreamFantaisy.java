@@ -53,7 +53,7 @@ public class DreamFantaisy {
 			
 		}
 		Thread th = new Thread(() -> {
-			CpState state = computer.run((int) (0.6f * (1024 * 1024)));
+			CpState state = computer.run(640 * 1024);
 			gpuImpl.setMode(GraphicsScreenImpl.MODE_CONSOLE);
 			gpuImpl.refresh();
 			if (gui != null) {
@@ -62,7 +62,7 @@ public class DreamFantaisy {
 			}
 			if (state.crashed) {
 				JOptionPane.showMessageDialog(gui, "Your DreamFantaisy® computer had to stop!\n" // dreamfantaisy is not registed (by me), it is just for a little more immersion.
-				                                 + "Iteration N°: " + state.iteration, "Guru Meditation!", JOptionPane.ERROR_MESSAGE);
+				                                 + "Iteration N°: " + state.iteration, "Is that the first time?", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		th.start();
@@ -85,7 +85,7 @@ public class DreamFantaisy {
 		}
 		
 		for (LookAndFeelInfo lafi : UIManager.getInstalledLookAndFeels()) {
-			if (lafi.getName().equals("CDE/Motif")) {
+			if (lafi.getName().equals("Windows Classic")) {
 				try {
 					UIManager.setLookAndFeel(lafi.getClassName());
 				} catch (Exception e) {

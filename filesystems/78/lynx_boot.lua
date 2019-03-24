@@ -1,6 +1,6 @@
 _G.OSDATA = {}
 _G.OSDATA.NAME = "LynxOS"
-_G.OSDATA.VERSION = "0.1"
+_G.OSDATA.VERSION = "0.1.01"
 
 local loaded = {}
 local run = true
@@ -60,6 +60,7 @@ function computer.exists(path, drive)
 	return (f ~= nil)
 end
 
+computer.shutdownRaw = computer.shutdown -- unsupported version of shutdown
 function computer.shutdown()
 	run = false
 end
