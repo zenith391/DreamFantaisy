@@ -3,6 +3,7 @@ _G.OSDATA.NAME = "LynxOS"
 _G.OSDATA.VERSION = "0.1.01"
 
 local loaded = {}
+local removableDrives = {}
 local run = true
 
 function require(lib)
@@ -51,6 +52,15 @@ function table.maxn(table)
   return i
 end
 
+function table.contains(table, element)
+	for k, v in pairs(table) do
+		if v == element then
+			return true
+		end
+	end
+	return false
+end
+
 function computer.getBootAddress()
 	return computer.getROMData()
 end
@@ -90,6 +100,9 @@ end
 
 require("event").register("keyPressed", resetTime)
 require("event").register("mouseMoved", resetTime)
+
+local event = require("event")
+
 local serialapi = require("serial")
 local serial = serialapi.forPort(51)
 serial.write("h")
@@ -116,6 +129,24 @@ local ok, err = pcall(function()
 			gop.process()
 			gpu.flushBuffer()
 		end
+		
+		-- Loop
+		local remdrv = computer.removableDevices()
+		for k, v in pairs(remdrv) do
+			if not table.contains(removableDrives, v) then
+				table.insert(removableDrives, v)
+				event.fireEvent("drive_inserted", v)
+				print("drive inserted: " .. v)
+			end
+		end
+		for k, v in pairs(removableDrives) do
+			if not table.contains(remdrv, v) then
+				table.remove(removableDrives, k)
+				event.fireEvent("drive_removed", v)
+				print("drive removed: " .. v)
+			end
+		end
+		
 		timeWithoutAction = timeWithoutAction + 1
 		while serial.isReadAvailable() do
 			local ch = serial.read()

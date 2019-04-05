@@ -50,6 +50,24 @@ public class ComputerLib {
 			
 		});
 		state.setField(-2, "components");
+		state.pushJavaFunction(new JavaFunction() {
+
+			@Override
+			public int invoke(LuaState lua) {
+				lua.newTable();
+				int ri = 1;
+				for (Drive d : comp.getDrives()) {
+					lua.pushNumber(ri);
+					lua.pushString(d.id);
+					lua.rawSet(-3);
+					ri++;
+				}
+				
+				return 1;
+			}
+			
+		});
+		state.setField(-2, "removableDevices");
 		
 		state.pushJavaFunction(new JavaFunction() {
 
@@ -149,7 +167,14 @@ public class ComputerLib {
 					if (drv.equals("rom")) {
 						throw new Exception();
 					}
-					bis = new BufferedInputStream(new FileInputStream("filesystems/" + drv + "/" + str));
+					String path = "filesystems/" + drv + "/" + str;
+					for (Drive drive : comp.getDrives()) {
+						if (drive.id.equals(drv)) {
+							path = drive.path;
+							break;
+						}
+					}
+					bis = new BufferedInputStream(new FileInputStream(path));
 					byte[] b = bis.readAllBytes();
 					StringBuilder sb = new StringBuilder();
 					for (byte b1 : b) {

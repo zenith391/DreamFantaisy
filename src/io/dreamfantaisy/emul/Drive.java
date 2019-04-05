@@ -22,4 +22,8 @@ public class Drive {
 		return id;
 	}
 	
+	public String toString() {
+		return id + ": " + path;
+	}
+	
 }

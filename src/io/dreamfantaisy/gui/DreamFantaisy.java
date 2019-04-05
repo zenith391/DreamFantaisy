@@ -2,6 +2,10 @@ package io.dreamfantaisy.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,7 +25,7 @@ import io.dreamfantaisy.emul.base.SerialPort;
 
 public class DreamFantaisy {
 
-	private Computer computer;
+	public static Computer computer;
 	private InterfaceUI gui;
 	private JFrame frame;
 	private static DreamFantaisy instance;
@@ -38,7 +42,6 @@ public class DreamFantaisy {
 	}
 	
 	public void start() {
-		computer = new Computer();
 		if (k == null) {
 			k = new Keyboard(gpuImpl);
 		}
@@ -78,6 +81,7 @@ public class DreamFantaisy {
 	
 	static JTabbedPane tabbedPane;
 	private DreamFantaisy(String[] args) {
+		computer = new Computer();
 		for (String arg : args) {
 			if (arg.equals("--playground")) {
 				playgroundMode = true;

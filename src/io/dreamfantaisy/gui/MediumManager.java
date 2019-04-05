@@ -2,22 +2,30 @@ package io.dreamfantaisy.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JList;
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+
+import io.dreamfantaisy.emul.Drive;
 
 public class MediumManager extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JList list;
+	private JList<Drive> list;
+	private JScrollPane scrollList;
 	private JButton btnAdd;
 	private JButton btnRemove;
 
@@ -30,16 +38,35 @@ public class MediumManager extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
-		list = new JList();
-		
+		list = new JList<Drive>();
+		list.setModel(new DefaultListModel<Drive>());
+		scrollList = new JScrollPane(list);
+		for (Drive drive : DreamFantaisy.computer.getDrives()) {
+			((DefaultListModel<Drive>) list.getModel()).addElement(drive);
+		}
 		btnAdd = new JButton("Add..");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setCurrentDirectory(new File("."));
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				if (chooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) return;
+				String id = JOptionPane.showInputDialog("Identifier");
+				if (id == null) {
+					return;
+				}
+				Drive drive = new Drive(chooser.getSelectedFile().getAbsolutePath(), id);
+				DreamFantaisy.computer.addDrive(drive);
+				((DefaultListModel<Drive>) list.getModel()).addElement(drive);
+			}
+		});
 		
 		btnRemove = new JButton("Remove..");
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addComponent(list, GroupLayout.PREFERRED_SIZE, 331, GroupLayout.PREFERRED_SIZE)
+					.addComponent(scrollList, GroupLayout.PREFERRED_SIZE, 331, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnAdd)
@@ -48,7 +75,7 @@ public class MediumManager extends JDialog {
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addComponent(list, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+				.addComponent(scrollList, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(btnAdd)
@@ -71,16 +98,6 @@ public class MediumManager extends JDialog {
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						dispose();
-					}
-				});
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
 			}
 		}
 	}
